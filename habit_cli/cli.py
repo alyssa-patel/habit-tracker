@@ -34,6 +34,17 @@ def done(name:str):
     mark_done(db, name, date.today())
     save_db(db)
     print(f"Done: {name}")
+
+@app.command("list")
+def list_cmd():
+    """ Show habits: name, streak, last_done
+    """
+    db  = load_db()
+    habits = list(db["habits"].values())
+    habits.sort(key=lambda x: x["name"].lower())
+
+    for h in habits:
+        print(h["name"], h["streak"], h["last_done"] or "-")
     
 
 if __name__ == "__main__":
