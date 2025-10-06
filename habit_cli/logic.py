@@ -47,3 +47,21 @@ def mark_done(db:dict, name: str, when: date) -> None:
     if today_iso not in h["history"]:
         h["history"].append(today_iso)
     
+def remove_habit(db: dict, name: str) -> None:
+    """Delete a habit if it exists."""
+    if name in db["habits"]:
+        del db["habits"][name]
+    else:
+        raise KeyError("habit not found")
+
+def rename_habit(db: dict, old: str, new: str) -> None:
+    """Rename a habit key, preserving history and streak."""
+    if old not in db["habits"]:
+        raise KeyError("habit not found")
+    if not new.strip():
+        raise ValueError("new name required")
+    if new in db["habits"]:
+        raise ValueError("target name already exists")
+    h = db["habits"].pop(old)
+    h["name"] = new
+    db["habits"][new] = h
