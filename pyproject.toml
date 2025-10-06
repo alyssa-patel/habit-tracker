@@ -1,0 +1,10 @@
+[project]
+name = "habit-cli"
+version = "0.1.0"
+description = "CLI to track habits with streaks and weekly goals."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["typer>=0.12", "rich>=13.0"]
+
+[project.scripts]
+habit = "habit_cli.cli:app"
