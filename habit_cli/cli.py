@@ -4,6 +4,10 @@ from datetime import date
 from .storage import load_db, save_db
 from .logic import add_habit
 from .logic import mark_done
+from rich.table import Table
+from rich.console import Console
+
+console = Console()
 
 
 app = typer.Typer(help="Track habits with streaks and weekly goals.")
@@ -40,8 +44,14 @@ def list_cmd():
     """ Show habits: name, streak, last_done
     """
     db = load_db()
-    for h in sorted(db["habits"].values(), key=lambda x: x["name"].lower()):
-        print(h["name"], h["streak"], h["last_done"] or "-")
+    habits = list(db["habits"].values())
+    habits.sort(key=lambda x: x["name"].lower())
+    t = Table(title="Habits")
+    for c in ["Name","Streak","Last Done","Goal/week"]:
+        t.add_column(c)
+    for h in habits:
+        t.add_row(h["name"], str(h["streak"]), h["last_done"] or "-", str(h.get("goal_week") or "-"))
+    console.print(t)
     
 
 if __name__ == "__main__":
