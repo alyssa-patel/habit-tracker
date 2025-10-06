@@ -39,11 +39,8 @@ def done(name:str):
 def list_cmd():
     """ Show habits: name, streak, last_done
     """
-    db  = load_db()
-    habits = list(db["habits"].values())
-    habits.sort(key=lambda x: x["name"].lower())
-
-    for h in habits:
+    db = load_db()
+    for h in sorted(db["habits"].values(), key=lambda x: x["name"].lower()):
         print(h["name"], h["streak"], h["last_done"] or "-")
     
 
