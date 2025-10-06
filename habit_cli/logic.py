@@ -65,3 +65,26 @@ def rename_habit(db: dict, old: str, new: str) -> None:
     h = db["habits"].pop(old)
     h["name"] = new
     db["habits"][new] = h
+
+def weekly_stats(db: dict, anchor: date | None = None) -> dict:
+    """
+    Return per-habit summary for the current ISO week:
+    { name: {"done_this_week": int, "goal": int|None, "streak": int } }
+    """
+    if anchor is None:
+        anchor = date.today()
+    year, week, _ = anchor.isocalendar()
+
+    def in_this_week(iso: str) -> bool:
+        y, w, _ = date.fromisoformat(iso).isocalendar()
+        return (y, w) == (year, week)
+
+    out = {}
+    for name, h in db["habits"].items():
+        done = sum(1 for d in h.get("history", []) if in_this_week(d))
+        out[name] = {
+            "done_this_week": done,
+            "goal": h.get("goal"),
+            "streak": h.get("streak", 0),
+        }
+    return out
